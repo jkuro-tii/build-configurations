@@ -9,8 +9,6 @@ CLOUD_HYPERVISOR = cloud-hypervisor
 
 VMM = qemu
 
-HOST_FILES = host/data/appvm-memshare/providers/net/netvm
-
 HOST_BUILD_FILES = \
 	build/host/data/appvm-memshare/rootfs.ext4 \
 	build/host/data/appvm-memshare/Image
@@ -22,11 +20,10 @@ HOST_BUILD_FILES = \
 # intended to be part of the input, like temporary editor files or
 # .license files.  So for all these reasons, only explicitly listed
 # files are included in the build result.
-build/svc: $(HOST_FILES) $(HOST_BUILD_FILES)
+build/svc: $(HOST_BUILD_FILES)
 	rm -rf $@
 	mkdir -p $@
 
-	tar -c $(HOST_FILES) | tar -C $@ -x --strip-components 1
 	tar -c $(HOST_BUILD_FILES) | tar -C $@ -x --strip-components 2
 
 build/host/data/appvm-memshare/Image: $(IMAGE)
@@ -54,7 +51,7 @@ VM_DIRS = dev run proc sys \
 
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.
-VM_LINKS = bin etc/ssl/certs/ca-certificates.crt
+VM_LINKS = bin
 
 VM_BUILD_FILES = build/etc/s6-rc
 VM_MOUNTPOINTS = dev run proc sys

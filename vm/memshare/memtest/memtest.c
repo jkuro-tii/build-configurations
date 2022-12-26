@@ -54,16 +54,19 @@ int get_pmem_size()
 
 int is_server()
 {
-  /* This file exists only on the server virtual machine. Use its
-   *  presence to detect which machine wwe are running on
-   */
-  FILE* test_file = fopen("/etc/nftables.conf", "r"); 
-
-  int first = test_file != NULL;
-  if (first)
-    fclose(test_file);
-
-  return first;
+  char buf[1024];
+  FILE *f = fopen("/proc/cmdline", "r");
+  if (f)
+  {
+    fread(buf, sizeof(buf), 1, f);
+    fclose(f);
+    if (strstr(buf, "memtest_server"))
+      return 1;
+    return 0;
+  }
+  printf("/proc/cmdline cannot be open. Exiting.\n");
+  exit(-1);
+  return 1;
 }
 
 void hexdump(volatile void *mem, int size)
@@ -197,7 +200,7 @@ int main(int argc, char**argv )
 {
   struct timeval time_start;
 
-  printf("Waiting for device...\n");
+  printf("Waiting for devices setup...\n");
   sleep(10);
 
   /* Open shared memory */

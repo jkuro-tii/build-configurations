@@ -51,7 +51,7 @@ let
         -T ${writeReferencesToFile packagesSysroot} .
   '';
 
-  kernel = buildPackages.linux_latest.override {
+  kernel = buildPackages.linux.override {
     kernelPatches = [ {
         name = "Shared memory patch";
         patch = ./memshare.patch;
@@ -63,10 +63,12 @@ let
       VIRTIO_PCI = yes;
       VIRTIO_BLK = yes;
       VIRTIO_CONSOLE = yes;
+      VIRTIO_PMEM_CHAR = yes;
       EXT4_FS = yes;
       DRM_BOCHS = yes;
       DRM = yes;
       AGP = yes;
+      LIBNVDIMM = yes;
     };
   };
 
@@ -74,7 +76,7 @@ let
 in
 
 stdenvNoCC.mkDerivation {
-  name = "appvm-memshare1";
+  name = "appvm-memshare";
 
   src = cleanSourceWith {
     filter = name: _type:
