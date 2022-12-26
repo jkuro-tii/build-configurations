@@ -36,7 +36,6 @@ let
 
   packagesSysroot = runCommand "packages-sysroot" {
     inherit packages;
-    #nativeBuildInputs = [ xorg.lndir ];
     passAsFile = [ "packages" ];
   } ''
     mkdir -p $out/usr/bin $out/usr/share
@@ -52,7 +51,7 @@ let
         -T ${writeReferencesToFile packagesSysroot} .
   '';
 
-  kernel = buildPackages.linux.override {
+  kernel = buildPackages.linux_latest.override {
     kernelPatches = [ {
         name = "Shared memory patch";
         patch = ./memshare.patch;
@@ -91,6 +90,7 @@ stdenvNoCC.mkDerivation {
   VMLINUX = "${kernel.dev}/vmlinux";
   IMAGE = "${kernel}/Image";
 
+  makeFlags = [ "SCRIPTS=${scripts}" ];
   installPhase = ''
     mv build/svc $out
   '';
